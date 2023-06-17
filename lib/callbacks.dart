@@ -5,28 +5,30 @@ class AudioVisualizer {
   final Set<FftCallback> _fftCallbacks = new Set();
   final Set<WaveformCallback> _waveformCallbacks = new Set();
 
-  AudioVisualizer({
-    required this.channel,
-  }) {
-    channel.setMethodCallHandler((MethodCall call) {
-      switch (call.method) {
-        case 'onFftVisualization':
-          List<int> samples = call.arguments['fft'];
-          for (Function callback in _fftCallbacks) {
-            callback(samples);
-          }
-          break;
-        case 'onWaveformVisualization':
-          List<int> samples = call.arguments['waveform'];
-          for (Function callback in _waveformCallbacks) {
-            callback(samples);
-          }
-          break;
-        default:
-          throw new UnimplementedError(
-              '${call.method} is not implemented for audio visualization channel.');
-      }
-    });
+  AudioVisualizer({required this.channel}) {
+    channel.setMethodCallHandler(
+      (MethodCall call) {
+        switch (call.method) {
+          case 'onFftVisualization':
+            List<int> samples = call.arguments['fft'];
+            for (Function callback in _fftCallbacks) {
+              callback(samples);
+            }
+            break;
+          case 'onWaveformVisualization':
+            List<int> samples = call.arguments['waveform'];
+            for (Function callback in _waveformCallbacks) {
+              callback(samples);
+            }
+            break;
+          default:
+            throw new UnimplementedError(
+              '${call.method} is not implemented for audio visualization channel.',
+            );
+        }
+        return true as Future<bool>;
+      },
+    );
   }
 
   void activate(int sessionID) {
